@@ -24,6 +24,14 @@ public class Fornecedor {
 	@NotNull
 	@Size(min = 2, max = 200)
 	private String razaoSocial;
+	
+	public Fornecedor(){
+	}
+
+	public Fornecedor(@NotNull @Size(min = 2, max = 200) String razaoSocial) {
+		super();
+		this.razaoSocial = razaoSocial;
+	}
 
 	public Long getId() {
 		return id;
