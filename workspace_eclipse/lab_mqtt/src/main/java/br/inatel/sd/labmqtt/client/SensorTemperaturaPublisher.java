@@ -1,0 +1,42 @@
+package br.inatel.sd.labmqtt.client;
+
+import java.util.Random;
+import java.util.UUID;
+
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+public class TemperatureSensorPublisher {
+
+    public static void main(String[] args) {
+        try {
+            String publisherId = UUID.randomUUID().toString();
+            IMqttClient publisher = new MqttClient(MyConstants.BROKER_URI, publisherId);
+
+            MqttMessage msg = getSoilTemperature();
+            msg.setQos(0);
+            msg.setRetained(true);
+
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+            options.setConnectionTimeout(10);
+            publisher.connect(options);
+
+            publisher.publish(MyConstants.TOPIC_1, msg);
+
+            publisher.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static MqttMessage getSoilTemperature() {
+        Random r = new Random();
+        double temperature = 80 + r.nextDouble() * 20.0;
+        byte[] payload = String.format("T:%04.2f", temperature).getBytes();
+        return new MqttMessage(payload);
+    }
+}
